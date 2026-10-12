@@ -10,7 +10,7 @@ Input example (S11.txt):
 
 For each bit, one period is allocated:
   0 -> stays LOW for the whole period
-  1 -> goes HIGH at the start of the period and returns LOW after PULSE_WIDTH
+  1 -> stays HIGH for the whole period and does not return to 0V mid-period
 
 Output:
   S11.txt -> S11.pwl, S12.txt -> S12.pwl, S13.txt -> S13.pwl
@@ -106,16 +106,13 @@ def make_points(
     events: list[tuple[float, float]] = [(0.0, high if bits[0] else low)]
     for i, bit in enumerate(bits):
         start = i * period
-        end = start + period
         # At the beginning of each bit period, establish its level.
         level = high if bit else low
         events.append((start, level))
-        # A '1' returns LOW after pulse width (unless width == period).
-        if bit and width < period:
+        # A 1 keeps the signal high for PULSE_WIDTH, but a run of consecutive 1s stays
+        # high across the whole run. The low transition is only emitted at the end of the run.
+        if bit and (i == len(bits) - 1 or bits[i + 1] == 0):
             events.append((start + width, low))
-        # At each next period, the next bit's level is set on the next iteration.
-        if i == len(bits) - 1:
-            events.append((end, low if (bit and width < period) or not bit else high))
 
     # Sort and collapse same-time events (keep the last value at that time).
     events.sort(key=lambda item: item[0])
