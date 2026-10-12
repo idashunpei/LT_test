@@ -5,7 +5,7 @@ Convert whitespace-separated 0/1 sequences (one signal per .txt file) to LTspice
 Edit the USER SETTINGS section below, then run:
     python make_pwl.py
 
-Input example (S1.txt):
+Input example (S11.txt):
     0 0 1 1 0 1
 
 For each bit, one period is allocated:
@@ -13,7 +13,7 @@ For each bit, one period is allocated:
   1 -> goes HIGH at the start of the period and returns LOW after PULSE_WIDTH
 
 Output:
-  S1.txt -> S1.pwl, S2.txt -> S2.pwl, etc.
+  S11.txt -> S11.pwl, S12.txt -> S12.pwl, S13.txt -> S13.pwl
 """
 
 from pathlib import Path
@@ -24,7 +24,7 @@ from pathlib import Path
 # ============================================================
 
 INPUT_DIR = "."             # Folder containing input .txt files
-FILE_PATTERN = "S*.txt"     # Which input files to process
+FILE_PATTERN = "S*.txt"     # Input files are named S11.txt, S12.txt, S13.txt
 
 PERIOD = "10u"              # Period between bit starts, e.g. "20u"
 PULSE_WIDTH = "9u"          # HIGH pulse width, e.g. "5u"; must be <= PERIOD
